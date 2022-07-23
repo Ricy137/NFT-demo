@@ -1,0 +1,37 @@
+@font-face {
+  font-family: 'Tronica Mono';
+  src: url('./fonts/tronica_mono-webfont.woff2') format('woff2'), url('./fonts/tronica_mono-webfont.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Libertad Mono';
+  src: url('./fonts/libertadmono-black-webfont.woff2') format('woff2'), url('./fonts/libertadmono-black-webfont.woff') format('woff');
+  font-weight: 900;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Libertad Mono';
+  src: url('./fonts/libertadmono-medium-webfont.woff2') format('woff2'), url('./fonts/libertadmono-medium-webfont.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+body {
+  font-family: 'Tronica Mono', -apple-system, BlinkMacSystemFont, Helvetica, Tahoma, Arial, Hiragino Sans GB, Microsoft YaHei, sans-serif;
+}
+
+.font-TM {
+  font-family: 'Tronica Mono', Helvetica, Arial, sans-serif;
+}
+
+.font-lib {
+  font-family: 'Libertad Mono', Helvetica, Arial, sans-serif;
+}
+
+.font-libbold {
+  font-family: 'Libertad Mono', Helvetica, Arial, sans-serif;
+  font-weight: 900;
+}

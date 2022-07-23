@@ -1,0 +1,18 @@
+[build.environment]
+  NODE_OPTIONS = "--max_old_space_size=4096"
+
+[[redirects]]
+  from = "/api/*"
+  to = "http://ec2-18-208-106-240.compute-1.amazonaws.com/api/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/publicPath/*"
+  to = "http://ec2-18-208-106-240.compute-1.amazonaws.com/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

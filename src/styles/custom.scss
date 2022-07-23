@@ -1,0 +1,57 @@
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin-bottom: unset;
+}
+.ant-collapse-content > .ant-collapse-content-box {
+  padding: 20px 40px;
+}
+.dark .ant-breadcrumb a,
+.dark .ant-breadcrumb-separator {
+  color: rgba(255, 255, 255, 0.45);
+}
+.dark .ant-breadcrumb li:last-child {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+//footer中的input，font-size自定义
+.footer {
+  .ant-input {
+    font-size: 40px;
+  }
+}
+
+@keyframes Clockwise {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes AntiClockwise {
+  0% {
+    transform: translateX(-50%);
+  }
+  100% {
+    transform: translateX(0%);
+  }
+}
+
+.scroll-clock {
+  animation: Clockwise 30s linear infinite;
+}
+
+.scroll-anticlock {
+  animation: AntiClockwise 30s linear infinite;
+}
+
+.FreeScrollbar-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
