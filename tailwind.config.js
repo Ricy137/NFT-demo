@@ -26,7 +26,9 @@ module.exports = {
         "secondary-grey": "#69778f",  //灰色，用于dark mode的正常文字样式
         "ternary-grey": "#59778f",  //深灰色，用于dark mode的disabled文字样式
         "primary-purple": "#6525FF", //紫色
-        "light-purple": "#F3F0FF" //浅紫色，用于列表高亮
+        "light-purple": "#F3F0FF", //浅紫色，用于列表高亮
+        "bright-green":"#60c657",//bright green ,for gradient bg
+        "bright-blue":"#35aee2"//bright blue ,for gradient bg
       },
       container: {
         padding: {

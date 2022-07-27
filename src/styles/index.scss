@@ -45,16 +45,16 @@ body,
   }
 }
 
-// .bg-gradient-custom {
-//   // background-image: linear-gradient(135deg, #e3fdf53b 0%, #e3faff78 46%, #ffe6fa 100%);
-//   background-image: linear-gradient(135deg, #e3fdf5 0%, #e3faff 48%, #ffe6fa 100%);
-// }
-
 .bg-gradient-custon {
   background: -webkit-linear-gradient(left, #60c657 30%, #35aee2 60%);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  background-size: 200% 200%;
+  animation: gradient-animation 4s ease infinite;
+}
+
+.gradient-animation {
   background-size: 200% 200%;
   animation: gradient-animation 4s ease infinite;
 }
