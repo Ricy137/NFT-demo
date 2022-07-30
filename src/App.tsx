@@ -1,19 +1,29 @@
 import React, { useEffect, useState } from 'react';
 import ReactLoading from "react-loading";
 import { ethers } from "ethers";
-import { Button, useStepContext } from '@mui/material';
 import { AlertColor } from '@mui/material/Alert';
 import TwitterLogo from './assets/twitter-logo.png';
 import nftDemo from './utils/NftDemo.json';
 import AlertInformation from './components/AlertInformation';
 
 const App = () => {
+  const [currentWidth, setCurrentWidth] = useState<number>(1920);
   const [currentAccounts, setCurrentAccounts] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
   const [severity, setSeverity] = useState<AlertColor>('info');
   const [message, setMessage] = useState<string>('');
-  const CONTRACT_ADDRESS = '0x7B03A2B1ef0503e7ac4Ce7c3016b18Eece44c809';
+  const CONTRACT_ADDRESS = '0x7763037183e18dBf6f968920bFa54812b4553005';
+  const GOERLI_CHAIN_ID = "0x5";
+
+  const onWidthChange = (): void => {
+    window.screenWidth = document.body.clientWidth;
+    setCurrentWidth(window.screenWidth);
+  }
+
+  window.onresize = (): void => {
+    onWidthChange();
+  }
 
   const checkIfWalletIsConnected = async (): Promise<void> => {
     const { ethereum } = window;
@@ -29,8 +39,7 @@ const App = () => {
     const accounts = await ethereum.request({ method: 'eth_accounts' });
     let chainId = await ethereum.request({ method: 'eth_chainId' });
     console.log("Connected to chain " + chainId);
-    const rinkebyChainId = "0x4";
-    if (chainId !== rinkebyChainId) {
+    if (chainId !== GOERLI_CHAIN_ID) {
       setOpen(true);
       setSeverity('error');
       setMessage('You are not connected to Goerli Test Network.');
@@ -57,8 +66,7 @@ const App = () => {
       }
       let chainId = await ethereum.request({ method: 'eth_chainId' });
       console.log("Connected to chain " + chainId);
-      const rinkebyChainId = "0x4";
-      if (chainId !== rinkebyChainId) {
+      if (chainId !== GOERLI_CHAIN_ID) {
         setOpen(true);
         setSeverity('error');
         setMessage('You are not connected to Goerli Test Network.');
@@ -87,8 +95,7 @@ const App = () => {
         const provider = new ethers.providers.Web3Provider(ethereum);
         let chainId = await ethereum.request({ method: 'eth_chainId' });
         console.log("Connected to chain " + chainId);
-        const rinkebyChainId = "0x4";
-        if (chainId !== rinkebyChainId) {
+        if (chainId !== GOERLI_CHAIN_ID) {
           setOpen(true);
           setSeverity('error');
           setMessage('You are not connected to Goerli Test Network.');
@@ -102,10 +109,10 @@ const App = () => {
           setSeverity('info');
           setMessage('Transaction\'s sent,mining... please wait');
           await nftTxn.wait();
-          console.log(`Mined, see transaction: https://rinkeby.etherscan.io/tx/${nftTxn.hash}`);
+          console.log(`Mined, see transaction: https://goerli.etherscan.io/tx/${nftTxn.hash}`);
           setOpen(true);
           setSeverity('success');
-          setMessage(`Your NFT has been minted! Check on opensea : https://testnets.opensea.io/assets/rinkeby/0x7b03a2b1ef0503e7ac4ce7c3016b18eece44c809/0`);
+          setMessage(`Your NFT has been minted! Check on opensea : https://testnets.opensea.io/assets/goerli/0x7b03a2b1ef0503e7ac4ce7c3016b18eece44c809/0`);
           setLoading(false);
         }
       } else {
@@ -145,26 +152,46 @@ const App = () => {
     }
     , [currentAccounts])
 
+  useEffect((): void => {
+    onWidthChange()
+  }, [])
+
   return (
-    <div className="bg-black h-full flex flex-col justify-center">
+    <div className="h-full flex flex-col justify-center max-w-screen-2xl">
       <AlertInformation handleClose={handleClose} open={open} severity={severity} message={message} />
       <div className='font-TM text-5xl sm:text-6xl md:text-8xl font-bold bg-gradient-custon text-center py-8'>NFT Demo</div>
       <div className='grid grid-cols-1 md:grid-cols-2 text-white'>
-        <div className='font-TM text-base sm:text-lg md:text-xl font-normal mx-[10%]'>
-          <p className='mb-8'>Each NFT costs 0.08 Rinkeby ETH and each address can mint 3 NFT at most.</p>
-          <p>Don't worry, Rinkeby ETH is fack money.And if you don't have any Rinkeby ETH.Find me on Twitter and I shall send you some &lt;3.</p>
+        <div className='font-TM text-base sm:text-lg md:text-xl font-normal mx-[10%] 3xl:mx-[20%]'>
+          <p className='mb-8'>Each NFT costs 0.08 Goerly ETH and each address can mint 3 NFT at most.</p>
+          <p>Don't worry, Goerly ETH is fack money.And if you don't have any Goerly ETH.Find me on Twitter and I shall send you some &lt;3.</p>
         </div>
-        <div className='flex flex-col items-center justify-center text-base sm:text-lg md:text-xl'>
+        <div className='flex flex-col items-center justify-center text-base m-8 lg:m-0 sm:text-lg md:text-xl'>
           {currentAccounts === '' ? <button
             disabled={loading}
             className={`flex items-center bg-[#14F195] border border-black text-black mb-8 py-3.5 px-6 rounded-3xl ${loading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-black hover:border-white hover:text-white'}`} onClick={(e): void => { e.preventDefault(); connectWallet() }}>{loading && <ReactLoading type="spin" color="#0F31C8" height={18} width={18} className='mr-1.5' />}Connect Wallet</button> : <button
-              className={`bg-gradient-to-r from-bright-green to-bright-blue gradient-animation border border-black text-black mb-8 py-3.5 px-6 rounded-3xl ${loading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-black hover:border-white hover:text-white'}`} onClick={(e): void => { e.preventDefault(); askContractToMintNft() }}>{loading && <ReactLoading type="spin" color="#0F31C8" height={18} width={18} className='mr-1.5' />}Mint 1 NFT</button>}
-          <button className='hover:bg-[#14F195] border border-white hover:border-black text-white hover:text-black py-3.5 px-6 rounded-3xl'>Check the collection on Rarible</button>
+              className={`flex items-cente bg-gradient-to-r from-bright-green to-bright-blue gradient-animation border border-black text-black mb-8 py-3.5 px-6 rounded-3xl ${loading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-black hover:border-white hover:text-white'}`} onClick={(e): void => { e.preventDefault(); askContractToMintNft() }}>{loading && <ReactLoading type="spin" color="#0F31C8" height={18} width={18} className='mr-1.5' />}Mint 1 NFT</button>}
+          <button className='hover:bg-[#14F195] border border-white hover:border-black text-white hover:text-black py-3.5 px-6 rounded-3xl'>Check the collection on Opensea</button>
         </div>
       </div>
-      <div className='flex flex-row items-center justify-center text-white mt-8'>
-        <img src={TwitterLogo} className='w-8 h-7 mr-2' />
-        <a href='https://twitter.com/MaryChao21' className='bg-clip-text text-transparent bg-gradient-to-r from-bright-green hover:from-bright-blue to-bright-blue hover:bg-[#179CF0] gradient-animation text-base sm:text-lg md:text-xl font-normal'>built by @MaryChao21 (I'm prefer to be called as Ricy,lol)</a>
+      <div className='flex flex-col items-center justify-center text-white my-8'>
+        {
+          currentWidth > 1024 ? <div
+            className='flex flex-row'
+          >
+            <img src={TwitterLogo} className='w-8 h-7 mr-2' />
+            <a
+              href='https://twitter.com/MaryChao21' className='bg-clip-text text-transparent bg-gradient-to-r from-bright-green hover:from-bright-blue to-bright-blue hover:bg-[#179CF0] gradient-animation text-base sm:text-lg md:text-xl font-normal'>built by @MaryChao21 (or call me Ricy,lol)
+            </a> </div> : <div
+              className='flex flex-row'
+            >
+            <img src={TwitterLogo} className='w-8 h-7 mr-2' />
+            <a
+              href='https://twitter.com/MaryChao21' className='bg-clip-text text-transparent bg-gradient-to-r from-bright-green hover:from-bright-blue to-bright-blue hover:bg-[#179CF0] gradient-animation text-base sm:text-lg md:text-xl font-normal'>built by @MaryChao21
+            </a> </div>
+        }
+        {
+          currentWidth < 1024 && <p className='bg-clip-text text-transparent bg-gradient-to-r from-bright-green hover:from-bright-blue to-bright-blue hover:bg-[#179CF0] gradient-animation text-base sm:text-lg md:text-xl font-normal'>(or call me Ricy, lol)</p>
+        }
       </div>
     </div>
   )

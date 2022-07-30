@@ -11,6 +11,7 @@ declare module "*.json" {
 declare global {
   interface Window {
     ethereum: any;
+    screenWidth:number
   }
 }
 export {};

@@ -7,7 +7,7 @@ module.exports = {
   ],
   darkMode: 'class',
   theme: {
-    // 扩展颜色类，生成bg-primary-light,text-primary-light...
+    // customized color, for bg-primary-light,text-primary-light...
     extend: {
       transitionProperty: {
         'height': 'height'
