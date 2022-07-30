@@ -7,5 +7,7 @@ npm install
 ```
 npm run dev
 ```
-
+```
+contributor: Ricy@MaryChao21
+```
 
