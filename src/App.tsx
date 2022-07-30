@@ -1,22 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import ReactLoading from "react-loading";
 import { ethers } from "ethers";
-import { Button } from '@mui/material';
+import { Button, useStepContext } from '@mui/material';
+import { AlertColor } from '@mui/material/Alert';
 import TwitterLogo from './assets/twitter-logo.png';
 import nftDemo from './utils/NftDemo.json';
-import { load } from 'dotenv';
-
+import AlertInformation from './components/AlertInformation';
 
 const App = () => {
   const [currentAccounts, setCurrentAccounts] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(false);
+  const [severity, setSeverity] = useState<AlertColor>('info');
+  const [message, setMessage] = useState<string>('');
   const CONTRACT_ADDRESS = '0x7B03A2B1ef0503e7ac4Ce7c3016b18Eece44c809';
 
   const checkIfWalletIsConnected = async (): Promise<void> => {
     const { ethereum } = window;
     if (!ethereum) {
       console.log("Make sure you have metamask!");
-      alert('Please install metamask first!')
+      setOpen(true);
+      setSeverity('error');
+      setMessage('Please install metamask first');
       return;
     } else {
       console.log("We have the ethereum object", ethereum);
@@ -26,7 +31,9 @@ const App = () => {
     console.log("Connected to chain " + chainId);
     const rinkebyChainId = "0x4";
     if (chainId !== rinkebyChainId) {
-      alert("You are not connected to the Rinkeby Test Network!");
+      setOpen(true);
+      setSeverity('error');
+      setMessage('You are not connected to Goerli Test Network.');
     } else {
       if (accounts && accounts !== undefined && accounts !== null && accounts[0]) {
         const account = accounts[0];
@@ -43,14 +50,18 @@ const App = () => {
     try {
       const { ethereum } = window;
       if (!ethereum) {
-        alert("Please install metamask first!");
+        setOpen(true);
+        setSeverity('error');
+        setMessage('Please install metamask first');
         return
       }
       let chainId = await ethereum.request({ method: 'eth_chainId' });
       console.log("Connected to chain " + chainId);
       const rinkebyChainId = "0x4";
       if (chainId !== rinkebyChainId) {
-        alert("You are not connected to the Rinkeby Test Network!");
+        setOpen(true);
+        setSeverity('error');
+        setMessage('You are not connected to Goerli Test Network.');
         return
       }
       setLoading(true);
@@ -62,7 +73,7 @@ const App = () => {
       }
     } catch (error) {
       console.log(error);
-    }finally{
+    } finally {
       setLoading(false);
     }
   }
@@ -78,17 +89,23 @@ const App = () => {
         console.log("Connected to chain " + chainId);
         const rinkebyChainId = "0x4";
         if (chainId !== rinkebyChainId) {
-          alert("You are not connected to the Rinkeby Test Network!");
+          setOpen(true);
+          setSeverity('error');
+          setMessage('You are not connected to Goerli Test Network.');
           setLoading(false);
         } else {
           const signer = provider.getSigner();
           const connectedContract = new ethers.Contract(CONTRACT_ADDRESS, nftDemo.abi, signer);
           console.log("Going to pop wallet now to pay gas...")
           let nftTxn = await connectedContract.mintNFT(1, { value: ethers.utils.parseEther("0.08") });
-          alert("Mining...please wait.")
+          setOpen(true);
+          setSeverity('info');
+          setMessage('Transaction\'s sent,mining... please wait');
           await nftTxn.wait();
-          alert(`Hey there! We've minted your NFT and sent it to your wallet. It may be blank right now. It can take a max of 10 min to show up on rarible. Here's the link: https://testnets.opensea.io/assets/rinkeby/0x7b03a2b1ef0503e7ac4ce7c3016b18eece44c809/0`)
           console.log(`Mined, see transaction: https://rinkeby.etherscan.io/tx/${nftTxn.hash}`);
+          setOpen(true);
+          setSeverity('success');
+          setMessage(`Your NFT has been minted! Check on opensea : https://testnets.opensea.io/assets/rinkeby/0x7b03a2b1ef0503e7ac4ce7c3016b18eece44c809/0`);
           setLoading(false);
         }
       } else {
@@ -98,15 +115,29 @@ const App = () => {
     } catch (error) {
       console.log(error)
       if (error.code === -32000) {
-        alert('You don\'t have sufficient rinkeby ETH to continue the process, please connect the developer on Twitter for more Rinkeby ETH')
+        setOpen(true);
+        setSeverity('error');
+        setMessage('You don\'t have sufficient GoerliETH to continue the process, please connect the developer on Twitter for more GoerliETH');
       } else if (error.code === 4001) {
-        alert('User rejected the connection requirements')
+        setOpen(true);
+        setSeverity('error');
+        setMessage('User rejected the connection requirements');
       } else {
-        alert('Something went wrong or you\'ve exceeded the 3 NFT most limit for each address')
+        console.log(error.message);
+        setOpen(true);
+        setSeverity('error');
+        setMessage('Something went wrong or you\'ve exceeded the 3 NFT most limit for each address');
       }
       setLoading(false);
     }
   }
+
+  const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpen(false);
+  };
 
   useEffect(
     (): void => {
@@ -116,6 +147,7 @@ const App = () => {
 
   return (
     <div className="bg-black h-full flex flex-col justify-center">
+      <AlertInformation handleClose={handleClose} open={open} severity={severity} message={message} />
       <div className='font-TM text-5xl sm:text-6xl md:text-8xl font-bold bg-gradient-custon text-center py-8'>NFT Demo</div>
       <div className='grid grid-cols-1 md:grid-cols-2 text-white'>
         <div className='font-TM text-base sm:text-lg md:text-xl font-normal mx-[10%]'>
@@ -124,9 +156,9 @@ const App = () => {
         </div>
         <div className='flex flex-col items-center justify-center text-base sm:text-lg md:text-xl'>
           {currentAccounts === '' ? <button
-          disabled={loading}
-            className={`flex items-center bg-[#14F195] border border-black text-black mb-8 py-3.5 px-6 rounded-3xl ${loading?'opacity-50 cursor-not-allowed':'hover:bg-black hover:border-white hover:text-white'}`} onClick={(e): void => { e.preventDefault(); connectWallet() }}>{loading&&<ReactLoading type="spin" color="#0F31C8" height={18} width={18} className='mr-1.5'/>}Connect Wallet</button> : <button
-              className={`bg-gradient-to-r from-bright-green to-bright-blue gradient-animation border border-black text-black mb-8 py-3.5 px-6 rounded-3xl ${loading?'opacity-50 cursor-not-allowed':'hover:bg-black hover:border-white hover:text-white'}`} onClick={(e): void => { e.preventDefault(); askContractToMintNft() }}>{loading&&<ReactLoading type="spin" color="#0F31C8" height={18} width={18} className='mr-1.5'/>}Mint 1 NFT</button>}
+            disabled={loading}
+            className={`flex items-center bg-[#14F195] border border-black text-black mb-8 py-3.5 px-6 rounded-3xl ${loading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-black hover:border-white hover:text-white'}`} onClick={(e): void => { e.preventDefault(); connectWallet() }}>{loading && <ReactLoading type="spin" color="#0F31C8" height={18} width={18} className='mr-1.5' />}Connect Wallet</button> : <button
+              className={`bg-gradient-to-r from-bright-green to-bright-blue gradient-animation border border-black text-black mb-8 py-3.5 px-6 rounded-3xl ${loading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-black hover:border-white hover:text-white'}`} onClick={(e): void => { e.preventDefault(); askContractToMintNft() }}>{loading && <ReactLoading type="spin" color="#0F31C8" height={18} width={18} className='mr-1.5' />}Mint 1 NFT</button>}
           <button className='hover:bg-[#14F195] border border-white hover:border-black text-white hover:text-black py-3.5 px-6 rounded-3xl'>Check the collection on Rarible</button>
         </div>
       </div>
