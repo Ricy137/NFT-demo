@@ -148,7 +148,7 @@ const App = () => {
 
   const reDirect = async (e: React.SyntheticEvent | Event): Promise<void> => {
     e.preventDefault();
-    window.open(`https://testnets.opensea.io/assets/goerli/${CONTRACT_ADDRESS}/0`);
+    window.open(`https://testnets.opensea.io/collection/unidentified-contract-2trbficcme`);
   }
 
   useEffect(
