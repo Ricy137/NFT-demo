@@ -146,6 +146,11 @@ const App = () => {
     setOpen(false);
   };
 
+  const reDirect = async (e: React.SyntheticEvent | Event): Promise<void> => {
+    e.preventDefault();
+    window.open(`https://testnets.opensea.io/assets/goerli/${CONTRACT_ADDRESS}/0`);
+  }
+
   useEffect(
     (): void => {
       checkIfWalletIsConnected()
@@ -170,7 +175,7 @@ const App = () => {
             disabled={loading}
             className={`flex items-center bg-[#14F195] border border-black text-black mb-8 py-3.5 px-6 rounded-3xl ${loading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-black hover:border-white hover:text-white'}`} onClick={(e): void => { e.preventDefault(); connectWallet() }}>{loading && <ReactLoading type="spin" color="#0F31C8" height={18} width={18} className='mr-1.5' />}Connect Wallet</button> : <button
               className={`flex items-cente bg-gradient-to-r from-bright-green to-bright-blue gradient-animation border border-black text-black mb-8 py-3.5 px-6 rounded-3xl ${loading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-black hover:border-white hover:text-white'}`} onClick={(e): void => { e.preventDefault(); askContractToMintNft() }}>{loading && <ReactLoading type="spin" color="#0F31C8" height={18} width={18} className='mr-1.5' />}Mint 1 NFT</button>}
-          <button className='hover:bg-[#14F195] border border-white hover:border-black text-white hover:text-black py-3.5 px-6 rounded-3xl'>Check the collection on Opensea</button>
+          <button onClick={(e) => { reDirect(e) }} className='hover:bg-[#14F195] border border-white hover:border-black text-white hover:text-black py-3.5 px-6 rounded-3xl'>Check the collection on Opensea</button>
         </div>
       </div>
       <div className='flex flex-col items-center justify-center text-white my-8'>
