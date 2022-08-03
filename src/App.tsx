@@ -112,7 +112,7 @@ const App = () => {
           console.log(`Mined, see transaction: https://goerli.etherscan.io/tx/${nftTxn.hash}`);
           setOpen(true);
           setSeverity('success');
-          setMessage(`Your NFT has been minted! Check on opensea : https://testnets.opensea.io/assets/goerli/0x7763037183e18dbf6f968920bfa54812b4553005/0`);
+          setMessage(`Your NFT has been minted! Check on opensea : https://testnets.opensea.io/assets/goerli/${CONTRACT_ADDRESS}/0`);
           setLoading(false);
         }
       } else {
