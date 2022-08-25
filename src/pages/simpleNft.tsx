@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react';
 import ReactLoading from "react-loading";
 import { ethers } from "ethers";
 import { AlertColor } from '@mui/material/Alert';
-import TwitterLogo from './assets/twitter-logo.png';
-import nftDemo from './utils/NftDemo.json';
-import AlertInformation from './components/AlertInformation';
+import TwitterLogo from '../assets/twitter-logo.png';
+import nftDemo from '../utils/NftDemo.json';
+import AlertInformation from '../components/AlertInformation';
 
-const App = () => {
+const SimpleNft = () => {
   const [currentWidth, setCurrentWidth] = useState<number>(1920);
   const [currentAccounts, setCurrentAccounts] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
@@ -202,4 +202,4 @@ const App = () => {
   )
 }
 
-export default App;
+export default SimpleNft;
