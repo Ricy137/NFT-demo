@@ -2,6 +2,7 @@
 import React from "react";
 import Landing from "../pages/simpleNft";
 import SimpleNft from "../pages/simpleNft";
+import NftGame from "../pages/nftGame/nftGame";
 
 let RoutesTable = [
   {
@@ -14,6 +15,12 @@ let RoutesTable = [
     path: "/simplenft",
     name: "simpleNft",
     component: <SimpleNft />,
+    lazy: true
+  },
+  {
+    path: "/nftgame",
+    name: "nftGame",
+    component: <NftGame />,
     lazy: true
   },
   // {

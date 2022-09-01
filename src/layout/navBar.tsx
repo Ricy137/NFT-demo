@@ -11,6 +11,9 @@ const NavBar = () => {
     }, {
       path: '/simplenft',
       name: 'simpleNft'
+    }, {
+      path: '/nftgame',
+      name: 'nftGame'
     }
   ]
 

@@ -1,4 +1,0 @@
-/*
-*calculate the height , et...
-* 
-*/
