@@ -1,11 +1,22 @@
 # NFT demo
 
+### css-module ts support
+
+Add this plugin to "typescript.tsserver.pluginPaths" in vscode settings.
+
+```json
+{
+  "typescript.tsserver.pluginPaths": ["typescript-plugin-css-modules"]
+}
+```
+### Getting started
+
 node Version 16+
 ```
-npm install
+yarn install
 ```
 ```
-npm run dev
+yarn run dev
 ```
 ```
 contributor: Ricy@MaryChao21
