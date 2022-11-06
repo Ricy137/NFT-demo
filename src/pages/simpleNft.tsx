@@ -4,7 +4,7 @@ import { ethers } from "ethers";
 import { AlertColor } from '@mui/material/Alert';
 import TwitterLogo from '@assets/twitter-logo.png';
 import nftDemo from '../utils/NftDemo.json';
-import AlertInformation from '@components/AlertInformation';
+// import AlertInformation from '@components/AlertInformation';
 
 const SimpleNft = () => {
   const [currentWidth, setCurrentWidth] = useState<number>(1920);
