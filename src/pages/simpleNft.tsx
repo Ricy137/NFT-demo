@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import ReactLoading from "react-loading";
 import { ethers } from "ethers";
 import { AlertColor } from '@mui/material/Alert';
-import TwitterLogo from '../assets/twitter-logo.png';
+import TwitterLogo from '@assets/twitter-logo.png';
 import nftDemo from '../utils/NftDemo.json';
-import AlertInformation from '../components/AlertInformation';
+import AlertInformation from '@components/AlertInformation';
 
 const SimpleNft = () => {
   const [currentWidth, setCurrentWidth] = useState<number>(1920);
@@ -163,7 +163,7 @@ const SimpleNft = () => {
 
   return (
     <div className="h-full flex flex-col justify-center max-w-screen-2xl">
-      <AlertInformation handleClose={handleClose} open={open} severity={severity} message={message} />
+      {/* <AlertInformation handleClose={handleClose} open={open} severity={severity} message={message} /> */}
       <div className='font-TM text-5xl sm:text-6xl md:text-8xl font-bold bg-gradient-custon text-center py-8'>NFT Demo</div>
       <div className='grid grid-cols-1 md:grid-cols-2 text-white'>
         <div className='font-TM text-base sm:text-lg md:text-xl font-normal mx-[10%] 3xl:mx-[20%]'>

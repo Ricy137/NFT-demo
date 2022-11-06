@@ -9,7 +9,7 @@ interface Information {
   handleClose(event?: React.SyntheticEvent | Event, reason?: string): void
 }
 
-const AlertInformation = (props: Information) => {
+const AlertInformation: React.FC<Information> = (props: Information) => {
   const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
     props,
     ref,
