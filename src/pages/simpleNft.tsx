@@ -96,7 +96,7 @@ const SimpleNft = () => {
           const connectedContract = new ethers.Contract(CONTRACT_ADDRESS, nftDemo.abi, signer);
           console.log("Going to pop wallet now to pay gas...")
           let nftTxn = await connectedContract.mintNFT(1, { value: ethers.utils.parseEther("0.08") });
-          showToast(`Transaction\'s sent,mining... please wait`, { type: 'success' });
+          showToast(`Transaction\'s sent,mining... please wait`, { type: 'info' });
           await nftTxn.wait();
           console.log(`Mined, see transaction: https://goerli.etherscan.io/tx/${nftTxn.hash}`);
           showToast(`Your NFT has been minted! Check on opensea : https://testnets.opensea.io/assets/goerli/${CONTRACT_ADDRESS}/0`, { type: 'success' });
