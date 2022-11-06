@@ -1,18 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import ReactLoading from "react-loading";
 import { ethers } from "ethers";
-import { AlertColor } from '@mui/material/Alert';
 import TwitterLogo from '@assets/twitter-logo.png';
 import nftDemo from '../utils/NftDemo.json';
-// import AlertInformation from '@components/AlertInformation';
+import { showToast } from '@components/showPopup/Toast';
 
 const SimpleNft = () => {
   const [currentWidth, setCurrentWidth] = useState<number>(1920);
   const [currentAccounts, setCurrentAccounts] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
-  const [open, setOpen] = useState<boolean>(false);
-  const [severity, setSeverity] = useState<AlertColor>('info');
-  const [message, setMessage] = useState<string>('');
   const CONTRACT_ADDRESS = '0x7763037183e18dBf6f968920bFa54812b4553005';
   const GOERLI_CHAIN_ID = "0x5";
 
@@ -25,51 +21,48 @@ const SimpleNft = () => {
     onWidthChange();
   }
 
-  const checkIfWalletIsConnected = async (): Promise<void> => {
-    const { ethereum } = window;
-    if (!ethereum) {
-      console.log("Make sure you have metamask!");
-      setOpen(true);
-      setSeverity('error');
-      setMessage('Please install metamask first');
-      return;
-    } else {
-      console.log("We have the ethereum object", ethereum);
-    }
-    const accounts = await ethereum.request({ method: 'eth_accounts' });
-    let chainId = await ethereum.request({ method: 'eth_chainId' });
-    console.log("Connected to chain " + chainId);
-    if (chainId !== GOERLI_CHAIN_ID) {
-      setOpen(true);
-      setSeverity('error');
-      setMessage('You are not connected to Goerli Test Network.');
-    } else {
-      if (accounts && accounts !== undefined && accounts !== null && accounts[0]) {
-        const account = accounts[0];
-        console.log("Found an authorized account", account);
-        // setupEventListener();
-        setCurrentAccounts(account);
+  const checkIfWalletIsConnected = async () => {
+    try {
+      const { ethereum } = window;
+      if (await !ethereum.enable()) {
+        console.log("Make sure you have metamask!");
+        showToast(`Sorry, you must have metamask first`, { type: 'failed' });
+        return;
       } else {
-        console.log("No authorized account found");
+        console.log("We have the ethereum object", ethereum);
       }
+      const accounts = await ethereum.request({ method: 'eth_accounts' });
+      let chainId = await ethereum.request({ method: 'eth_chainId' });
+      console.log("Connected to chain " + chainId);
+      if (chainId !== GOERLI_CHAIN_ID) {
+        showToast(`You are not connected to Goerli Test Network.`, { type: 'failed' });
+      } else {
+        if (accounts && accounts !== undefined && accounts !== null && accounts[0]) {
+          const account = accounts[0];
+          console.log("Found an authorized account", account);
+          // setupEventListener();
+          setCurrentAccounts(account);
+        } else {
+          console.log("No authorized account found");
+        }
+      }
+    }catch(error){
+      showToast(`Oops, ${error?.message}`, { type: 'failed' });
     }
+    
   }
 
   const connectWallet = async (): Promise<void> => {
     try {
       const { ethereum } = window;
       if (!ethereum) {
-        setOpen(true);
-        setSeverity('error');
-        setMessage('Please install metamask first');
+        showToast(`Sorry, you must have metamask first`, { type: 'failed' });
         return
       }
       let chainId = await ethereum.request({ method: 'eth_chainId' });
       console.log("Connected to chain " + chainId);
       if (chainId !== GOERLI_CHAIN_ID) {
-        setOpen(true);
-        setSeverity('error');
-        setMessage('You are not connected to Goerli Test Network.');
+        showToast(`You are not connected to Goerli Test Network.`, { type: 'failed' });
         return
       }
       setLoading(true);
@@ -96,23 +89,17 @@ const SimpleNft = () => {
         let chainId = await ethereum.request({ method: 'eth_chainId' });
         console.log("Connected to chain " + chainId);
         if (chainId !== GOERLI_CHAIN_ID) {
-          setOpen(true);
-          setSeverity('error');
-          setMessage('You are not connected to Goerli Test Network.');
+          showToast(`You are not connected to Goerli Test Network.`, { type: 'failed' });
           setLoading(false);
         } else {
           const signer = provider.getSigner();
           const connectedContract = new ethers.Contract(CONTRACT_ADDRESS, nftDemo.abi, signer);
           console.log("Going to pop wallet now to pay gas...")
           let nftTxn = await connectedContract.mintNFT(1, { value: ethers.utils.parseEther("0.08") });
-          setOpen(true);
-          setSeverity('info');
-          setMessage('Transaction\'s sent,mining... please wait');
+          showToast(`Transaction\'s sent,mining... please wait`, { type: 'success' });
           await nftTxn.wait();
           console.log(`Mined, see transaction: https://goerli.etherscan.io/tx/${nftTxn.hash}`);
-          setOpen(true);
-          setSeverity('success');
-          setMessage(`Your NFT has been minted! Check on opensea : https://testnets.opensea.io/assets/goerli/${CONTRACT_ADDRESS}/0`);
+          showToast(`Your NFT has been minted! Check on opensea : https://testnets.opensea.io/assets/goerli/${CONTRACT_ADDRESS}/0`, { type: 'success' });
           setLoading(false);
         }
       } else {
@@ -122,29 +109,16 @@ const SimpleNft = () => {
     } catch (error) {
       console.log(error)
       if (error.code === -32000) {
-        setOpen(true);
-        setSeverity('error');
-        setMessage('You don\'t have sufficient GoerliETH to continue the process, please connect the developer on Twitter for more GoerliETH');
+        showToast(`You don\'t have sufficient GoerliETH to continue the process, please connect the developer on Twitter for more GoerliETH`, { type: 'failed' });
       } else if (error.code === 4001) {
-        setOpen(true);
-        setSeverity('error');
-        setMessage('User rejected the connection requirements');
+        showToast(`User rejected the connection requirements`, { type: 'failed' });
       } else {
         console.log(error.message);
-        setOpen(true);
-        setSeverity('error');
-        setMessage('Something went wrong or you\'ve exceeded the 3 NFT most limit for each address');
+        showToast(`Something went wrong or you\'ve exceeded the 3 NFT most limit for each address`, { type: 'failed' });
       }
       setLoading(false);
     }
   }
-
-  const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-    setOpen(false);
-  };
 
   const reDirect = async (e: React.SyntheticEvent | Event): Promise<void> => {
     e.preventDefault();
