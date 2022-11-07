@@ -5,7 +5,13 @@ import TwitterLogo from '@assets/twitter-logo.png';
 import nftDemo from '../utils/NftDemo.json';
 import { showToast } from '@components/showPopup/Toast';
 
-const SimpleNft = () => {
+
+const ErrorMessage: { [key: string]: string } = {
+  '-32000': "You don\'t have sufficient GoerliETH to continue the process, please connect the developer on Twitter for more GoerliETH",
+  '4001': "User rejected the connection requirements",
+}
+
+const SimpleNft: React.FC = () => {
   const [currentWidth, setCurrentWidth] = useState<number>(1920);
   const [currentAccounts, setCurrentAccounts] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
@@ -24,7 +30,7 @@ const SimpleNft = () => {
   const checkIfWalletIsConnected = async () => {
     try {
       const { ethereum } = window;
-      if (await !ethereum.enable()) {
+      if (!ethereum || ! await ethereum.enable()) {
         console.log("Make sure you have metamask!");
         showToast(`Sorry, you must have metamask first`, { type: 'failed' });
         return;
@@ -46,10 +52,10 @@ const SimpleNft = () => {
           console.log("No authorized account found");
         }
       }
-    }catch(error){
-      showToast(`Oops, ${error?.message}`, { type: 'failed' });
+    } catch (error) {
+      showToast(`Oops, ${JSON.parse(typeof(error)==='string'?error:'').error.message??'Something went wrong'}`, { type: 'failed' });
     }
-    
+
   }
 
   const connectWallet = async (): Promise<void> => {
@@ -104,18 +110,11 @@ const SimpleNft = () => {
         }
       } else {
         console.log("Ethereum object doesn't exist!");
-        setLoading(false);
       }
     } catch (error) {
-      console.log(error)
-      if (error.code === -32000) {
-        showToast(`You don\'t have sufficient GoerliETH to continue the process, please connect the developer on Twitter for more GoerliETH`, { type: 'failed' });
-      } else if (error.code === 4001) {
-        showToast(`User rejected the connection requirements`, { type: 'failed' });
-      } else {
-        console.log(error.message);
-        showToast(`Something went wrong or you\'ve exceeded the 3 NFT most limit for each address`, { type: 'failed' });
-      }
+      console.log(error);
+      showToast(ErrorMessage[error.code.toString] ?? "Oops, somthing went wrong or you've minted 3 NFTs", { type: 'failed' });
+    } finally {
       setLoading(false);
     }
   }
@@ -137,7 +136,6 @@ const SimpleNft = () => {
 
   return (
     <div className="h-full flex flex-col justify-center max-w-screen-2xl">
-      {/* <AlertInformation handleClose={handleClose} open={open} severity={severity} message={message} /> */}
       <div className='font-TM text-5xl sm:text-6xl md:text-8xl font-bold bg-gradient-custon text-center py-8'>NFT Demo</div>
       <div className='grid grid-cols-1 md:grid-cols-2 text-white'>
         <div className='font-TM text-base sm:text-lg md:text-xl font-normal mx-[10%] 3xl:mx-[20%]'>
@@ -147,29 +145,29 @@ const SimpleNft = () => {
         <div className='flex flex-col items-center justify-center text-base m-8 lg:m-0 sm:text-lg md:text-xl'>
           {currentAccounts === '' ? <button
             disabled={loading}
-            className={`flex items-center bg-[#14F195] border border-black text-black mb-8 py-3.5 px-6 rounded-3xl ${loading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-black hover:border-white hover:text-white'}`} onClick={(e): void => { e.preventDefault(); connectWallet() }}>{loading && <ReactLoading type="spin" color="#0F31C8" height={18} width={18} className='mr-1.5' />}Connect Wallet</button> : <button
-              className={`flex items-cente bg-gradient-to-r from-bright-green to-bright-blue gradient-animation border border-black text-black mb-8 py-3.5 px-6 rounded-3xl ${loading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-black hover:border-white hover:text-white'}`} onClick={(e): void => { e.preventDefault(); askContractToMintNft() }}>{loading && <ReactLoading type="spin" color="#0F31C8" height={18} width={18} className='mr-1.5' />}Mint 1 NFT</button>}
-          <button onClick={(e) => { reDirect(e) }} className='hover:bg-[#14F195] border border-white hover:border-black text-white hover:text-black py-3.5 px-6 rounded-3xl'>Check the collection on Opensea</button>
+            className={`flex items-center bg-#14F195 border border-black text-black mb-8 py-3.5 px-6 rounded-3xl font-TM ${loading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-black hover:border-white hover:text-white'}`} onClick={(e): void => { e.preventDefault(); connectWallet() }}>{loading && <ReactLoading type="spin" color="#0F31C8" height={18} width={18} className='mr-1.5' />}Connect Wallet</button> : <button
+              className={`flex items-cente bg-gradient-to-r from-#60c657 to-#35aee2 gradient-animation border border-black text-black mb-8 py-3.5 px-6 rounded-3xl font-TM ${loading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-black hover:border-white hover:text-white'}`} onClick={(e): void => { e.preventDefault(); askContractToMintNft() }}>{loading && <ReactLoading type="spin" color="#0F31C8" height={18} width={18} className='mr-1.5' />}Mint 1 NFT</button>}
+          <button onClick={(e) => { reDirect(e) }} className='font-TM hover:bg-#14F195 bg-black border border-white hover:border-black text-white hover:text-black py-3.5 px-6 rounded-3xl'>Check the collection on Opensea</button>
         </div>
       </div>
-      <div className='flex flex-col items-center justify-center text-white my-8'>
+      <div className='flex flex-col items-center justify-center my-8'>
         {
           currentWidth > 1024 ? <div
             className='flex flex-row'
           >
             <img src={TwitterLogo} className='w-8 h-7 mr-2' />
             <a
-              href='https://twitter.com/MaryChao21' className='bg-clip-text text-transparent bg-gradient-to-r from-bright-green hover:from-bright-blue to-bright-blue hover:bg-[#179CF0] gradient-animation text-base sm:text-lg md:text-xl font-normal'>built by @MaryChao21 (or call me Ricy,lol)
+              href='https://twitter.com/MaryChao21' className='bg-clip-text text-transparent bg-gradient-to-r from-#60c657 hover:from-#35aee2 to-#35aee2 hover:bg-#179CF0 gradient-animation text-base sm:text-lg md:text-xl font-normal'>built by @MaryChao21 (or call me Ricy,lol)
             </a> </div> : <div
               className='flex flex-row'
             >
             <img src={TwitterLogo} className='w-8 h-7 mr-2' />
             <a
-              href='https://twitter.com/MaryChao21' className='bg-clip-text text-transparent bg-gradient-to-r from-bright-green hover:from-bright-blue to-bright-blue hover:bg-[#179CF0] gradient-animation text-base sm:text-lg md:text-xl font-normal'>built by @MaryChao21
+              href='https://twitter.com/MaryChao21' className='bg-clip-text text-transparent bg-gradient-to-r from-#60c657 hover:from-#35aee2 to-#35aee2 hover:bg-#179CF0 gradient-animation text-base sm:text-lg md:text-xl font-normal'>built by @MaryChao21
             </a> </div>
         }
         {
-          currentWidth < 1024 && <p className='bg-clip-text text-transparent bg-gradient-to-r from-bright-green hover:from-bright-blue to-bright-blue hover:bg-[#179CF0] gradient-animation text-base sm:text-lg md:text-xl font-normal'>(or call me Ricy, lol)</p>
+          currentWidth < 1024 && <p className='bg-clip-text text-transparent bg-gradient-to-r from-#60c657 hover:from-#35aee2 to-#35aee2 hover:bg-#179CF0 gradient-animation text-base sm:text-lg md:text-xl font-normal'>(or call me Ricy, lol)</p>
         }
       </div>
     </div>
